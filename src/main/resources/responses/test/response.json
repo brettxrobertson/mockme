@@ -1,0 +1,7 @@
+{
+  "endpoint": "test",
+  "payload" : {
+    "param1" : "someValue",
+    "param2": "someothere"
+  }
+}
