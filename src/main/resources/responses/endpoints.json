@@ -1,0 +1,20 @@
+[
+  {
+    "endpoint": "/test",
+    "inputs": {
+      "test11": "String",
+      "test12": "double"
+    },
+    "validate": true,
+    "response": "{'someOutput': 'here is the output'}"
+  },
+  {
+    "endpoint": "/test2",
+    "inputs": {
+      "test21": "String",
+      "test22": "double"
+    },
+    "validate": true,
+    "response": "{'someOutput': 'here is more output'}"
+  }
+]

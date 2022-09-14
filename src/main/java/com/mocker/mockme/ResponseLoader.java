@@ -15,8 +15,9 @@ public class ResponseLoader
 	}
 
 	ResourceLoader resourceLoader;
-	public Resource loadResponse(String endpoint) {
-		return resourceLoader.getResource(
-						"classpath:responses" + endpoint + "/response.json");
+
+	public Resource loadResponse()
+	{
+		return resourceLoader.getResource("classpath:responses/endpoints.json");
 	}
 }
