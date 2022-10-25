@@ -1,23 +1,32 @@
 package com.mocker.mockme;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 @Component
 public class ResponseLoader
 {
-	@Autowired
-	public ResponseLoader(ResourceLoader resourceLoader)
+
+	private ByteArrayResource file;
+
+	public void addFile(ByteArrayResource endpointFile)
 	{
-		this.resourceLoader = resourceLoader;
+		this.file = endpointFile;
 	}
 
-	ResourceLoader resourceLoader;
-
-	public Resource loadResponse()
+	public InputStream getFile() throws ResponseStatusException
 	{
-		return resourceLoader.getResource("classpath:responses/endpoints.json");
+		if (file == null)
+		{
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No endpoints added");
+		}
+
+		return new ByteArrayInputStream(file.getByteArray());
+
 	}
 }
