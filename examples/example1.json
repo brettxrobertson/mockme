@@ -1,0 +1,12 @@
+[
+  {
+    "id": "1",
+    "endpoint": "/test",
+    "response": "{'someOutput': 'here is the output'}"
+  },
+  {
+    "id": "2",
+    "endpoint": "/test2/1",
+    "response": "{'someOutput': 'here is more output'}"
+  }
+]
