@@ -74,7 +74,7 @@ import java.util.List;
 		return list.get(0).response();
 	}
 
-	@PostMapping(value = "/upload/endpoints") public ResponseEntity<Object> handleEnpointsFileUpload(@RequestParam("file") MultipartFile file) throws IOException
+	@PostMapping(value = "/upload/endpoints") public ResponseEntity<Object> handleEndpointsFileUpload(@RequestParam("file") MultipartFile file) throws IOException
 	{
 		responseLoader.addFile(FileType.ENDPOINTS, new ByteArrayResource(file.getBytes()));
 
