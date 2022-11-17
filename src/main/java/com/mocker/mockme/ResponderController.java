@@ -1,11 +1,14 @@
 package com.mocker.mockme;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,12 +31,31 @@ public class ResponderController
 	ResponseLoader responseLoader;
 
 	@GetMapping("/**")
-	public String testResponse(HttpServletRequest request) throws IOException, ResponseStatusException
+	public String getResponder(HttpServletRequest request) throws IOException, ResponseStatusException
 	{
+		return genericResponder(request);
+	}
+	@PostMapping (path = "/**",
+					consumes = MediaType.ALL_VALUE,
+					produces = MediaType.APPLICATION_JSON_VALUE)
+	public String postResponder(HttpServletRequest request, @RequestBody(required=false) String body) throws IOException, ResponseStatusException
+	{
+		return genericResponder(request,body);
+	}
 
-		InputStream resource = responseLoader.getFile();
+	public String genericResponder(HttpServletRequest request) throws IOException, ResponseStatusException
+	{
+		return genericResponder(request,null);
+	}
+	public String genericResponder(HttpServletRequest request, String body) throws IOException, ResponseStatusException
+	{
+		InputStream resource = responseLoader.getEndpoints();
+		InputStream validator = responseLoader.getValidator();
 
 		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+
+		//TODO: add body validation and refactoring this
 		List<Endpoint> list = Arrays.stream(objectMapper.readValue(resource, Endpoint[].class)).filter(
 						endpoint -> endpoint.endpoint().equals(request.getServletPath())).toList();
 		if (list.isEmpty())
@@ -43,12 +65,17 @@ public class ResponderController
 		}
 		return list.get(0).response();
 	}
-
-	@PostMapping(value = "/addfile")
-	public ResponseEntity<Object> handleFileUpload(@RequestParam("file") MultipartFile file) throws IOException
+	@PostMapping(value = "/upload/endpoints")
+	public ResponseEntity<Object> handleEnpointsFileUpload(@RequestParam("file") MultipartFile file) throws IOException
 	{
-		responseLoader.addFile(new ByteArrayResource(file.getBytes()));
+		responseLoader.addFile(FileType.ENDPOINTS,new ByteArrayResource(file.getBytes()));
 
+		return new ResponseEntity<>(HttpStatus.ACCEPTED);
+	}
+	@PostMapping(value = "/upload/validator")
+	public ResponseEntity<Object> handleValidatorFileUpload(@RequestParam("file") MultipartFile file) throws IOException
+	{
+		responseLoader.addFile(FileType.VALIDATOR,new ByteArrayResource(file.getBytes()));
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
 }
